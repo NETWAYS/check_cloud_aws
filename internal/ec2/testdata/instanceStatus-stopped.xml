@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DescribeInstanceStatusResponse xmlns="http://ec2.amazonaws.com/doc/2016-11-15/">
+    <requestId>b47525e7-1284-4383-8684-578f349e97c5</requestId>
+    <instanceStatusSet>
+    </instanceStatusSet>
+</DescribeInstanceStatusResponse>
