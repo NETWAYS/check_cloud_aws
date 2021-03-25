@@ -29,7 +29,7 @@ Global Flags:
 ```
 
 ```
-$ check_azure_cloud ec2 instances
+$ check_cloud_aws ec2 instances
 CRITICAL - 4 Instances found - 2 running - 2 stopped
 
 [CRITICAL] i-0f38c870feae9c593 "(none)" stopped (no status)
@@ -58,7 +58,7 @@ Global Flags:
 ```
 
 ```
-$ check_azure_cloud ec2 instance --name IcingaMaster
+$ check_cloud_aws ec2 instance --name IcingaMaster
 OK - "IcingaMaster" running instance=ok system=ok
 
 ID: i-06378c1b63a42384f
