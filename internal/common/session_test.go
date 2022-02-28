@@ -13,6 +13,7 @@ const testConfig = `[default]
 region = eu-central-1
 `
 
+// nolint: gosec
 const testCredentials = `[default]
 aws_access_key_id=FAKE
 aws_secret_access_key=FAKE
