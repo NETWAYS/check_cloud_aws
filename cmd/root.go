@@ -40,6 +40,7 @@ func Help(cmd *cobra.Command, strings []string) {
 func init() {
 	rootCmd.AddCommand(ec2Cmd)
 	rootCmd.AddCommand(s3Cmd)
+	rootCmd.AddCommand(cloudfrontCmd)
 	rootCmd.SetHelpFunc(Help)
 
 	p := rootCmd.PersistentFlags()
