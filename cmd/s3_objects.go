@@ -139,7 +139,7 @@ func init() {
 	s3ObjectFlags.StringSliceVarP(&BucketNames, "buckets", "b", nil,
 		"Name of one or multiple S3 buckets. If '--buckets' is empty, all buckets will be evaluated.")
 	s3ObjectFlags.StringVar(&ObjectPrefix, "prefix", "",
-		"Limits the response to keys that begin with the specified prefix, e.G. '-P test' filters all objects which starts with 'test'.\n"+
+		"Limits the response to keys that begin with the specified prefix, e.G. '--prefix test' filters all objects which starts with 'test'.\n"+
 			"NOTE: Keep in mind, that objects beneath a directory will be ignored!")
 	s3ObjectFlags.StringVarP(&CriticalObjectSize, "crit-object-size", "c", "1gb",
 		"Critical threshold for the size of the object. Alerts if size is greater than critical threshold.\n"+

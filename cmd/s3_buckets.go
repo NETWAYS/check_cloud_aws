@@ -120,10 +120,10 @@ func init() {
 	s3BucketFlags.StringSliceVarP(&BucketNames, "buckets", "b", nil,
 		"Name of the S3 bucket. If '--buckets' is empty, all buckets will be evaluated.")
 	s3BucketFlags.StringVarP(&CriticalBucketSize, "crit-bucket-size", "c", "20Gb",
-		"Critical threshold for the size of the specified bucket. Alerts if size is greater than critical threshold. Values are MB.\n"+
+		"Critical threshold for the size of the specified bucket. Alerts if size is greater than critical threshold.\n"+
 			"Possible  values are MB, GB or TB. Without any identifier specified MB is used.")
 	s3BucketFlags.StringVarP(&WarningBucketSize, "warn-bucket-size", "w", "10Gb",
-		"Warning threshold for the size of the specified bucket. Alerts if size is greater than warning threshold. Values are MB.\n"+
+		"Warning threshold for the size of the specified bucket. Alerts if size is greater than warning threshold.\n"+
 			"Possible  values are MB, GB or TB. Without any identifier specified MB is used.")
 
 	s3BucketFlags.SortFlags = false

@@ -92,7 +92,7 @@ var cloudfrontCmd = &cobra.Command{
 			output = fmt.Sprintf("")
 		}
 
-		summary += fmt.Sprintf("critical %d - warning %d", totalCrit, totalWarn)
+		summary += fmt.Sprintf("critical %d - warning %d\n", totalCrit, totalWarn)
 
 		if len(distributions) > 1 {
 			if result.WorstState(states...) != 0 {
