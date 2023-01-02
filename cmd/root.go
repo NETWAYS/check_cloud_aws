@@ -15,7 +15,7 @@ var (
 
 var rootCmd = &cobra.Command{
 	Use:   "check_cloud_aws",
-	Short: "Icinga check plugin to check Amazon EC2 instances",
+	Short: "An Icinga check plugin to check Amazon Web Services",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		go check.HandleTimeout(Timeout)
 	},
