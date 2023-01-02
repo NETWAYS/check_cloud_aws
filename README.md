@@ -1,9 +1,33 @@
 # check_cloud_aws
 
-Icinga check plugin to check Amazon AWS resources. At the moment the check supports EC2 instances, Cloudfront and S3
-Buckets.
+An Icinga check plugin to check Amazon AWS resources.
 
 ## Usage
+
+### Health Status
+
+A general status based on the RSS feed on the AWS Health Page
+
+```
+Usage:
+  check_cloud_aws status [flags]
+
+Flags:
+  -u, --url string       The AWS Status Page URL (default "https://status.aws.amazon.com")
+  -s, --service string   The AWS Service to check (default "ec2")
+  -h, --help             help for status
+```
+
+```
+check_cloud_aws status --service cloudfront
+OK - Service cloudfront is operating normally
+
+check_cloud_aws --region us-west-1 status --service cloudwatch
+WARNING - Information available for cloudwatch in us-west-1
+
+check_cloud_aws --region eu-west-1 status
+CRITICAL - Service disruption for ec2 in eu-west-1
+```
 
 ### EC2 - Instances
 
@@ -152,7 +176,7 @@ Global Flags:
 ````
 
 ````
-$ check_cloud_aws cloudfront       
+$ check_cloud_aws cloudfront
 CRITICAL - Found 2 Distributions - critical 1 - warning 1
 
 [WARNING] E32127W2BLH4SR status=InProgress enabled=true
