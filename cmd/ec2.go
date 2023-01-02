@@ -15,7 +15,7 @@ var ec2Cmd = &cobra.Command{
 }
 
 func RequireEC2Client() *ec2.Client {
-	session, err := common.CreateSession(Profile, Region)
+	session, err := common.CreateSession(CredentialsFile, Profile, Region)
 	if err != nil {
 		check.ExitError(fmt.Errorf("could not setup AWS API session: %w", err))
 	}

@@ -1,6 +1,7 @@
 # check_cloud_aws
 
-Icinga check plugin to check Amazon AWS resources. At the moment the check supports EC2 instances, Cloudfront and S3 Buckets.
+Icinga check plugin to check Amazon AWS resources. At the moment the check supports EC2 instances, Cloudfront and S3
+Buckets.
 
 ## Usage
 
@@ -22,10 +23,10 @@ Flags:
   -n, --name string        Search for ec2 instances by name (e.g. instance*)
 
 Global Flags:
-  -P, --profile string   AWS credential profile (~/.aws/credentials)
-  -R, --region string    AWS region name (e.g. eu-central-1)
-  -t, --timeout int      Timeout for the check (default 30)
-
+  -C, --credentials-file string   Path to the credentials file (default "/Users/philipp/.aws/credentials")
+  -P, --profile string            The AWS profile name, which represents a separate credential profile in the credential file (default "default")
+  -R, --region string             The AWS region to send requests to (default "eu-central-1")
+  -t, --timeout int               Timeout for the check (default 30)
 ```
 
 ```
@@ -51,10 +52,11 @@ Flags:
   -i, --id string     Look for ec2 instance by id
   -n, --name string   Look for ec2 instance by name
 
-Global Flags:
-  -P, --profile string   AWS credential profile (~/.aws/credentials)
-  -R, --region string    AWS region name (e.g. eu-central-1)
-  -t, --timeout int      Timeout for the check (default 30)
+GGlobal Flags:
+  -C, --credentials-file string   Path to the credentials file (default "/Users/philipp/.aws/credentials")
+  -P, --profile string            The AWS profile name, which represents a separate credential profile in the credential file (default "default")
+  -R, --region string             The AWS region to send requests to (default "eu-central-1")
+  -t, --timeout int               Timeout for the check (default 30)
 ```
 
 ```
@@ -66,7 +68,7 @@ Type: t2.micro
 AutoScaling: (none)
 ```
 
-### S3 
+### S3
 
 In the bucket context, calculates the objects inside the bucket and alerts if the size reaches the threshold.
 In the object context, each object inside a bucket will be checked if the size reaches the threshold.
@@ -86,9 +88,10 @@ Flags:
   -h, --help                      help for bucket
 
 Global Flags:
-  -P, --profile string   AWS credential profile (~/.aws/credentials)
-  -R, --region string    AWS region name (e.g. eu-central-1)
-  -t, --timeout int      Timeout for the check (default 30)
+  -C, --credentials-file string   Path to the credentials file (default "/Users/philipp/.aws/credentials")
+  -P, --profile string            The AWS profile name, which represents a separate credential profile in the credential file (default "default")
+  -R, --region string             The AWS region to send requests to (default "eu-central-1")
+  -t, --timeout int               Timeout for the check (default 30)
 ````
 
 ```
@@ -116,9 +119,10 @@ Flags:
   -h, --help                      help for object
 
 Global Flags:
-  -P, --profile string   AWS credential profile (~/.aws/credentials)
-  -R, --region string    AWS region name (e.g. eu-central-1)
-  -t, --timeout int      Timeout for the check (default 30)
+  -C, --credentials-file string   Path to the credentials file (default "/Users/philipp/.aws/credentials")
+  -P, --profile string            The AWS profile name, which represents a separate credential profile in the credential file (default "default")
+  -R, --region string             The AWS region to send requests to (default "eu-central-1")
+  -t, --timeout int               Timeout for the check (default 30)
 ````
 
 ````
@@ -129,7 +133,8 @@ OK - Found 3 objects - critical 0 - warning 0 | test-file2.jpg=20MB;800;1024 tes
 
 ### Cloudfront
 
-Checks a specific or multiple cloudfront distribution from a region. When the states is `disabled`, or is `InProgress`, the check will alert.
+Checks a specific or multiple cloudfront distribution from a region. When the states is `disabled`, or is `InProgress`,
+the check will alert.
 
 ````
 Usage:
@@ -140,9 +145,10 @@ Flags:
   -h, --help           help for cloudfront
 
 Global Flags:
-  -P, --profile string   AWS credential profile (~/.aws/credentials)
-  -R, --region string    AWS region name (e.g. eu-central-1)
-  -t, --timeout int      Timeout for the check (default 30)
+  -C, --credentials-file string   Path to the credentials file (default "/Users/philipp/.aws/credentials")
+  -P, --profile string            The AWS profile name, which represents a separate credential profile in the credential file (default "default")
+  -R, --region string             The AWS region to send requests to (default "eu-central-1")
+  -t, --timeout int               Timeout for the check (default 30)
 ````
 
 ````
@@ -160,12 +166,15 @@ Create a new IAM account for API access, add the required **read-only permission
 that account.
 
 Permission EC2:
+
 * `arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess`
 
 Permission Cloudfront:
+
 * `arn:aws:iam::aws:policy/CloudFrontReadOnlyAccess`
 
 Permission S3:
+
 * `arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess`
 
 You can use the common AWS environment variables for the check, but we recommend storing the credentials in
@@ -194,7 +203,6 @@ The region setting here influences the default region of check_cloud_aws, which 
 region = eu-central-1
 ```
 
-
 ## Further Documentation
 
 * [AWS SDK for Go](https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html)
@@ -211,8 +219,8 @@ the Free Software Foundation, either version 3 of the License, or
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see [gnu.org/licenses](https://www.gnu.org/licenses/).
+along with this program. If not, see [gnu.org/licenses](https://www.gnu.org/licenses/).

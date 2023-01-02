@@ -6,7 +6,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"gopkg.in/ini.v1"
-	"io/ioutil"
 	"os"
 )
 
@@ -24,7 +23,7 @@ const (
 // These are the standard config files, used by AWS CLI and other SDKs.
 //
 // Also see https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html
-func CreateSession(profile, region string) (sess *session.Session, err error) {
+func CreateSession(credentialsfile, profile, region string) (sess *session.Session, err error) {
 	if region == "" {
 		region = os.Getenv(AwsDefaultRegion)
 	}
@@ -39,7 +38,8 @@ func CreateSession(profile, region string) (sess *session.Session, err error) {
 	}
 
 	sess, err = session.NewSessionWithOptions(session.Options{
-		Profile: profile,
+		Profile:           profile,
+		SharedConfigFiles: []string{credentialsfile},
 		Config: aws.Config{
 			Region:                        aws.String(region),
 			CredentialsChainVerboseErrors: aws.Bool(true),
@@ -67,7 +67,7 @@ func CreateTestSession(region string) (sess *session.Session) {
 }
 
 func DetectRegionFromConfig(filename string) (region string) {
-	data, err := ioutil.ReadFile(filename)
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		return
 	}
