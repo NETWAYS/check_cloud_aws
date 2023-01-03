@@ -7,9 +7,10 @@ import (
 )
 
 var (
-	Timeout = 30
-	Profile string
-	Region  string
+	Timeout         = 30
+	Profile         string
+	Region          string
+	CredentialsFile string
 )
 
 var rootCmd = &cobra.Command{
@@ -39,10 +40,22 @@ func Help(cmd *cobra.Command, strings []string) {
 
 func init() {
 	rootCmd.AddCommand(ec2Cmd)
-	rootCmd.SetHelpFunc(Help)
+	rootCmd.AddCommand(s3Cmd)
+	rootCmd.AddCommand(cloudfrontCmd)
+
+	rootCmd.CompletionOptions.DisableDefaultCmd = true
+	rootCmd.DisableAutoGenTag = true
+	rootCmd.SetHelpCommand(&cobra.Command{
+		Use:    "no-help",
+		Hidden: true,
+	})
 
 	p := rootCmd.PersistentFlags()
+	p.StringVarP(&CredentialsFile, "credentials-file", "C", "~/.aws/credentials", "Path to the credentials file")
+	p.StringVarP(&Region, "region", "R", "eu-central-1", "The AWS region to send requests to")
+	p.StringVarP(&Profile, "profile", "P", "default", "The AWS profile name, which represents a separate credential profile in the credential file")
 	p.IntVarP(&Timeout, "timeout", "t", Timeout, "Timeout for the check")
-	p.StringVarP(&Profile, "profile", "P", Profile, "AWS credential profile (~/.aws/credentials)")
-	p.StringVarP(&Region, "region", "R", Region, "AWS region name (e.g. eu-central-1)")
+
+	rootCmd.Flags().SortFlags = false
+	p.SortFlags = false
 }
