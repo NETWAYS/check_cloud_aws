@@ -56,7 +56,7 @@ func init() {
 	}
 
 	p := rootCmd.PersistentFlags()
-	p.StringVarP(&CredentialsFile, "credentials-file", "C", homedir+"/.aws/credentials", "Path to the credentials file")
+	p.StringVarP(&CredentialsFile, "credentials-file", "C", homedir+"/.aws/credentials", "Path to the credentials file. The default path will be evaluated as the home directory of the current user")
 	p.StringVarP(&Region, "region", "R", "eu-central-1", "The AWS region to send requests to")
 	p.StringVarP(&Profile, "profile", "P", "default", "The AWS profile name, which represents a separate credential profile in the credential file")
 	p.IntVarP(&Timeout, "timeout", "t", Timeout, "Timeout for the check")
