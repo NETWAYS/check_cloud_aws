@@ -23,7 +23,7 @@ Flags:
   -n, --name string        Search for ec2 instances by name (e.g. instance*)
 
 Global Flags:
-  -C, --credentials-file string   Path to the credentials file. The default path will be evaluated as the home directory of the current user (default "~/.aws/credentials")
+  -C, --credentials-file string   Path to the credentials file (default "~/.aws/credentials")
   -P, --profile string            The AWS profile name, which represents a separate credential profile in the credential file (default "default")
   -R, --region string             The AWS region to send requests to (default "eu-central-1")
   -t, --timeout int               Timeout for the check (default 30)
@@ -53,7 +53,7 @@ Flags:
   -n, --name string   Look for ec2 instance by name
 
 Global Flags:
-  -C, --credentials-file string   Path to the credentials file. The default path will be evaluated as the home directory of the current user (default "~/.aws/credentials")
+  -C, --credentials-file string   Path to the credentials file (default "~/.aws/credentials")
   -P, --profile string            The AWS profile name, which represents a separate credential profile in the credential file (default "default")
   -R, --region string             The AWS region to send requests to (default "eu-central-1")
   -t, --timeout int               Timeout for the check (default 30)
@@ -88,7 +88,7 @@ Flags:
   -h, --help                      help for bucket
 
 Global Flags:
-  -C, --credentials-file string   Path to the credentials file. The default path will be evaluated as the home directory of the current user (default "~/.aws/credentials")
+  -C, --credentials-file string   Path to the credentials file (default "~/.aws/credentials")
   -P, --profile string            The AWS profile name, which represents a separate credential profile in the credential file (default "default")
   -R, --region string             The AWS region to send requests to (default "eu-central-1")
   -t, --timeout int               Timeout for the check (default 30)
@@ -119,7 +119,7 @@ Flags:
   -h, --help                      help for object
 
 Global Flags:
-  -C, --credentials-file string   Path to the credentials file. The default path will be evaluated as the home directory of the current user (default "~/.aws/credentials")
+  -C, --credentials-file string   Path to the credentials file (default "~/.aws/credentials")
   -P, --profile string            The AWS profile name, which represents a separate credential profile in the credential file (default "default")
   -R, --region string             The AWS region to send requests to (default "eu-central-1")
   -t, --timeout int               Timeout for the check (default 30)
@@ -145,7 +145,7 @@ Flags:
   -h, --help           help for cloudfront
 
 Global Flags:
-  -C, --credentials-file string   Path to the credentials file. The default path will be evaluated as the home directory of the current user (default "~/.aws/credentials")
+  -C, --credentials-file string   Path to the credentials file (default "~/.aws/credentials")
   -P, --profile string            The AWS profile name, which represents a separate credential profile in the credential file (default "default")
   -R, --region string             The AWS region to send requests to (default "eu-central-1")
   -t, --timeout int               Timeout for the check (default 30)
