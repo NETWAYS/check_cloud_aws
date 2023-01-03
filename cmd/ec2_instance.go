@@ -40,7 +40,7 @@ var ec2InstanceCmd = &cobra.Command{
 		}
 
 		output := instance.GetOutput()
-		output += "\n\n" + instance.GetLongOutput()
+		output += "\n" + instance.GetLongOutput()
 
 		check.Exit(instance.GetStatus(), output)
 	},

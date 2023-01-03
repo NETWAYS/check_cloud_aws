@@ -43,13 +43,18 @@ var ec2InstancesCmd = &cobra.Command{
 			states[*instance.Instance.State.Name]++
 		}
 
-		summary := fmt.Sprintf("%d Instances found", len(instances.Instances))
+		summary := fmt.Sprintf("%d Instances:", len(instances.Instances))
 
+		ctr := 0
 		for state, count := range states {
-			summary += fmt.Sprintf(" - %d %s", count, state)
+			summary += fmt.Sprintf(" %d %s ", count, state)
+			ctr += count
+			if ctr != len(instances.Instances) {
+				summary += fmt.Sprintf("-")
+			}
 		}
 
-		check.Exit(instances.GetStatus(), summary+"\n\n"+instances.GetOutput())
+		check.Exit(instances.GetStatus(), summary+"\n"+instances.GetOutput())
 	},
 }
 

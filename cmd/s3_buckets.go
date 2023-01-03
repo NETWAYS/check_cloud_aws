@@ -28,6 +28,7 @@ var s3BucketCmd = &cobra.Command{
 			states    []int
 			totalCrit int
 			totalWarn int
+			totalOk   int
 			rc        int
 			perf      perfdata.PerfdataList
 		)
@@ -86,6 +87,7 @@ var s3BucketCmd = &cobra.Command{
 				totalWarn++
 			} else {
 				rc = 0
+				totalOk++
 			}
 
 			states = append(states, rc)
@@ -107,7 +109,7 @@ var s3BucketCmd = &cobra.Command{
 			perf.Add(&p)
 		}
 
-		summary += fmt.Sprintf("Found %d buckets - critical %d - warning %d\n", len(buckets.Buckets), totalCrit, totalWarn)
+		summary += fmt.Sprintf("%d Buckets: %d Critical - %d Warning - %d Ok\n", len(buckets.Buckets), totalCrit, totalWarn, totalOk)
 
 		check.ExitRaw(result.WorstState(states...), summary+output, "|", perf.String())
 	},

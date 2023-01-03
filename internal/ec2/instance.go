@@ -52,21 +52,21 @@ func (i *Instance) GetLongOutput() (out string) {
 		}
 	}
 
-	out += "ID: " + *i.Instance.InstanceId + "\n"
-	out += "Type: " + *i.Instance.InstanceType + "\n"
-	out += "AutoScaling: " + autoscaling + "\n"
+	out += " \\_ID: " + *i.Instance.InstanceId + "\n"
+	out += " \\_Type: " + *i.Instance.InstanceType + "\n"
+	out += " \\_AutoScaling: " + autoscaling + "\n"
 
 	return
 }
 
-//    * instance-state-name - The state of the instance (pending | running |
-//    shutting-down | terminated | stopping | stopped).
+// * instance-state-name - The state of the instance (pending | running |
+// shutting-down | terminated | stopping | stopped).
 //
-//    * instance-status.status - The status of the instance (ok | impaired |
-//    initializing | insufficient-data | not-applicable).
+// * instance-status.status - The status of the instance (ok | impaired |
+// initializing | insufficient-data | not-applicable).
 //
-//    * system-status.status - The system status of the instance (ok | impaired
-//    | initializing | insufficient-data | not-applicable).
+// * system-status.status - The system status of the instance (ok | impaired
+// | initializing | insufficient-data | not-applicable).
 func (i *Instance) GetStatus() int {
 	states := []int{3, 3, 3}
 
