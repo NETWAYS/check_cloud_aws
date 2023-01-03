@@ -70,8 +70,8 @@ AutoScaling: (none)
 
 ### S3
 
-In the bucket context, calculates the objects inside the bucket and alerts if the size reaches the threshold.
-In the object context, each object inside a bucket will be checked if the size reaches the threshold.
+In the bucket context, calculates the size of the bucket and alerts if its size reaches the threshold.
+In the object context, the size of each object inside a bucket will be checked against the threshold.
 
 #### s3 bucket
 
@@ -133,7 +133,7 @@ OK - Found 3 objects - critical 0 - warning 0 | test-file2.jpg=20MB;800;1024 tes
 
 ### Cloudfront
 
-Checks a specific or multiple cloudfront distribution from a region. When the states is `disabled`, or is `InProgress`,
+Checks a specific or multiple cloudfront distributions from a region. When the state is `disabled` or `InProgress`,
 the check will alert.
 
 ````
