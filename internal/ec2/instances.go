@@ -22,7 +22,7 @@ func (i Instances) GetStatus() int {
 
 func (i Instances) GetOutput() (output string) {
 	for _, instance := range i.Instances {
-		output += fmt.Sprintf("[%s] %s %s\n",
+		output += fmt.Sprintf(" \\_[%s] %s %s\n",
 			check.StatusText(instance.GetStatus()),
 			*instance.Instance.InstanceId,
 			instance.GetOutput())

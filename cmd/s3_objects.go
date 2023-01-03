@@ -30,6 +30,7 @@ var s3ObjectCmd = &cobra.Command{
 			states       []int
 			totalCrit    int
 			totalWarn    int
+			totalOk      int
 			totalObjects int64
 			rc           int
 			perf         perfdata.PerfdataList
@@ -79,7 +80,7 @@ var s3ObjectCmd = &cobra.Command{
 				check.ExitError(err)
 			}
 
-			output += fmt.Sprintf("[%s]:\n", *bucket.Name)
+			output += fmt.Sprintf(" \\_[%s]:\n", *bucket.Name)
 
 			for _, content := range objectsOutput.V2Output.Contents {
 				if crit.DoesViolate(float64(*content.Size)) {
@@ -90,13 +91,12 @@ var s3ObjectCmd = &cobra.Command{
 					totalWarn++
 				} else {
 					rc = 0
+					totalOk++
 				}
 
 				states = append(states, rc)
 
-				if rc != 0 {
-					output += objectsOutput.GetObjectOutput(*content.Size, rc, *content.Key)
-				}
+				output += objectsOutput.GetObjectOutput(*content.Size, rc, *content.Key)
 
 				p := perfdata.Perfdata{
 					Label: *content.Key,
@@ -112,17 +112,7 @@ var s3ObjectCmd = &cobra.Command{
 			}
 		}
 
-		if result.WorstState(states...) == 0 {
-			output = fmt.Sprintf("")
-		}
-
-		summary += fmt.Sprintf("Found %d objects - critical %d - warning %d", totalObjects, totalCrit, totalWarn)
-
-		if len(buckets.Buckets) > 1 {
-			if result.WorstState(states...) != 0 {
-				summary += "\n"
-			}
-		}
+		summary += fmt.Sprintf("%d Objects: %d Critical - %d Warning - %d Ok\n", totalObjects, totalCrit, totalWarn, totalOk)
 
 		if ShowPerfdata {
 			check.ExitRaw(result.WorstState(states...), summary+output, "|", perf.String())

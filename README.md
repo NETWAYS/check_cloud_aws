@@ -55,12 +55,11 @@ Global Flags:
 
 ```
 $ check_cloud_aws ec2 instances
-CRITICAL - 4 Instances found - 2 running - 2 stopped
-
-[CRITICAL] i-0f38c870feae9c593 "(none)" stopped (no status)
-[OK] i-06378c1b63a42384f "IcingaMaster" running instance=ok system=ok
-[CRITICAL] i-0d5c0ad646be4610e "IcingaAgent" stopped (no status)
-[OK] i-0a1b3143ae11565fc "IcingaSatellit" running instance=ok system=ok
+CRITICAL - 4 Instances: 2 running - 2 stopped
+ \_[CRITICAL] i-0f38c870feae9c593 "(none)" stopped (no status)
+ \_[OK] i-06378c1b63a42384f "IcingaMaster" running instance=ok system=ok
+ \_[CRITICAL] i-0d5c0ad646be4610e "IcingaAgent" stopped (no status)
+ \_[OK] i-0a1b3143ae11565fc "IcingaSatellit" running instance=ok system=ok
 ```
 
 #### ec2 instance
@@ -86,10 +85,9 @@ Global Flags:
 ```
 $ check_cloud_aws ec2 instance --name IcingaMaster
 OK - "IcingaMaster" running instance=ok system=ok
-
-ID: i-06378c1b63a42384f
-Type: t2.micro
-AutoScaling: (none)
+ \_ID: i-06378c1b63a42384f
+ \_Type: t2.micro
+ \_AutoScaling: (none)
 ```
 
 ### S3
@@ -119,10 +117,10 @@ Global Flags:
 ````
 
 ```
-$ check_cloud_aws s3 bucket -w 100mb -c 200mb
-OK - Found 2 buckets - critical 0 - warning 0
-[OK] my-aws-test-bucket1: 50MiB
-[OK] my-aws-test-bucket2: 60MiB | my-aws-test-bucket1=50MB;100;200 my-aws-test-bucket2=60MB;100;200
+$ check_cloud_aws s3 bucket -C ~/.aws/credentials -w 100mb -c 200mb
+OK - 2 Buckets: 0 Critical - 0 Warning - 2 Ok
+ \_[OK] my-aws-test-bucket1 - value: 50MiB
+ \_[OK] my-aws-test-bucket2 - value: 20MiB | my-aws-test-bucket1=50MB;100;200 my-aws-test-bucket2=60MB;100;200
 ```
 
 ### s3 object
@@ -150,9 +148,14 @@ Global Flags:
 ````
 
 ````
-$ check_cloud_aws s3 object --perfdata --prefix 'test' -b 'my-aws-testbucket1'
-OK - Found 3 objects - critical 0 - warning 0 | test-file2.jpg=20MB;800;1024 test-file3.gif=10MB;800;1024 test-file5.rtf=10MB;800;1024
-
+$ check_cloud_aws s3 object -C ~/.aws/credentials --perfdata --prefix 'test'
+OK - 2 Objects: 0 Critical - 0 Warning - 3 Ok
+ \_[y-aws-testbucket1]:
+   \_[OK] test-file4.txt: 20MiB
+ \_[y-aws-testbucket2]:
+   \_[OK] test-file3.gif: 10MiB
+   \_[OK] test-file5.rtf: 20MiB
+ | test-file4.txt=20MB;800;1024 test-file3.gif=10MB;800;1024 test-file5.gif=20MB;800;1024
 ````
 
 ### Cloudfront
@@ -176,12 +179,10 @@ Global Flags:
 ````
 
 ````
-$ check_cloud_aws cloudfront
-CRITICAL - Found 2 Distributions - critical 1 - warning 1
-
-[WARNING] E32127W2BLH4SR status=InProgress enabled=true
-[CRITICAL] E16D3ZI1743SVJ status=Deployed enabled=false
- | E32127W2BLH4SR=InProgress E16D3ZI1743SVJ=Deployed
+$ check_cloud_aws  cloudfront -C ~/.aws/credentials
+WARNING - 1 Distributions: 0 Disabled - 1 InProgress - 0 Enabled
+ \_[WARNING] E2BD5GDFJZXKWC status=InProgress enabled=true
+ | E2BD5GDFJZXKWC=inprogress
 ````
 
 ## Authentication

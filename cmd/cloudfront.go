@@ -24,6 +24,7 @@ var cloudfrontCmd = &cobra.Command{
 			summary       string
 			totalCrit     int
 			totalWarn     int
+			totalOk       int
 			rc            int
 			states        []int
 			distributions []*c.GetDistributionOutput
@@ -57,48 +58,38 @@ var cloudfrontCmd = &cobra.Command{
 			}
 		}
 
-		summary += fmt.Sprintf("Found %d Distributions - ", len(distributions))
+		summary += fmt.Sprintf("%d Distributions: ", len(distributions))
 
 		for _, distribution := range distributions {
+			var val string
+
 			if *distribution.Distribution.DistributionConfig.Enabled == false {
+				val = "disabled"
 				rc = 2
 				totalCrit++
 			} else if *distribution.Distribution.Status == "InProgress" {
+				val = "inprogress"
 				rc = 1
 				totalWarn++
 			} else {
+				val = "enabled"
 				rc = 0
+				totalOk++
 			}
 
 			states = append(states, rc)
 
-			if rc != 0 {
-				output += client.GetOutput(rc, distribution)
-			}
+			output += client.GetOutput(rc, distribution)
 
 			p := perfdata.Perfdata{
 				Label: *distribution.Distribution.Id,
-				Value: *distribution.Distribution.Status,
+				Value: val,
 			}
 
 			perf.Add(&p)
-
-			if len(distributions) > 1 {
-				output += "\n"
-			}
 		}
 
-		if result.WorstState(states...) == 0 {
-			output = fmt.Sprintf("")
-		}
-
-		summary += fmt.Sprintf("critical %d - warning %d\n", totalCrit, totalWarn)
-
-		if len(distributions) > 1 {
-			if result.WorstState(states...) != 0 {
-				summary += "\n"
-			}
-		}
+		summary += fmt.Sprintf("%d Disabled - %d InProgress - %d Enabled\n", totalCrit, totalWarn, totalOk)
 
 		check.ExitRaw(result.WorstState(states...), summary+output, "|", perf.String())
 	},

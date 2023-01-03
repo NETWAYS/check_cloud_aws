@@ -16,7 +16,7 @@ type V2Output struct {
 }
 
 func (v *V2Output) GetBucketOutput(size int64, status int) (output string) {
-	output = fmt.Sprintf("[%s] %s: %s",
+	output = fmt.Sprintf(" \\_[%s] %s - value: %s",
 		check.StatusText(status),
 		*v.V2Output.Name,
 		convert.BytesIEC(size))
