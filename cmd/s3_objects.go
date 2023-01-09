@@ -22,6 +22,24 @@ var (
 var s3ObjectCmd = &cobra.Command{
 	Use:   "object",
 	Short: "Checks the size of objects, stored in a single bucket or multiple buckets",
+	Example: `
+	check_cloud_aws s3 object
+	OK - 2 Objects: 0 Critical - 0 Warning - 2 Ok
+	 \_[my-bucket]:
+		 \_[OK] foo.fs: 100MiB
+		 \_[OK] bar.fs: 100MiB
+
+	check_cloud_aws s3 object --prefix file
+	OK - 3 Objects: 0 Critical - 0 Warning - 3 Ok
+	 \_[my-bucket]:
+		 \_[OK] file_1.fs: 10MiB
+		 \_[OK] file_2.fs: 20MiB
+		 \_[OK] file_3.fs: 30MiB
+
+	check_cloud_aws s3 object --crit-object-size 10KB
+	CRITICAL - 1 Objects: 1 Critical - 0 Warning - 0 Ok
+	 \_[my-bucket]:
+		 \_[CRITICAL] file.fs: 100MiB`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
 			err          error
@@ -130,15 +148,15 @@ func init() {
 		"Name of one or multiple S3 buckets. If '--buckets' is empty, all buckets will be evaluated.")
 	s3ObjectFlags.StringVar(&ObjectPrefix, "prefix", "",
 		"Limits the response to keys that begin with the specified prefix, e.G. '--prefix test' filters all objects which starts with 'test'.\n"+
-			"NOTE: Keep in mind, that objects beneath a directory will be ignored!")
+			"NOTE: Keep in mind, that objects beneath a directory will be ignored.")
 	s3ObjectFlags.StringVarP(&CriticalObjectSize, "crit-object-size", "c", "1gb",
-		"Critical threshold for the size of the object. Alerts if size is greater than critical threshold.\n"+
-			"Possible  values are MB, GB or TB. Without any identifier specified MB is used.")
+		"Critical threshold for the size of the object. Alerts if the size is greater than the critical threshold.\n"+
+			"Possible units are MB, GB or TB (defaults to MB if none is specified).")
 	s3ObjectFlags.StringVarP(&WarningObjectSize, "warn-object-size", "w", "800mb",
-		"Critical threshold for the size of the object. Alerts if size is greater than warning threshold.\n"+
-			"Possible  values are MB, GB or TB. Without any identifier specified MB is used.")
+		"Critical threshold for the size of the object. Alerts if the size is greater than the warning threshold.\n"+
+			"Possible units are MB, GB or TB (defaults to MB if none is specified).")
 	s3ObjectFlags.BoolVarP(&ShowPerfdata, "perfdata", "p", false,
-		"Displays perfdata and lists ALL objects in the specified bucket.")
+		"Displays perfdata and lists all objects in the specified bucket.")
 
 	s3ObjectFlags.SortFlags = false
 }
