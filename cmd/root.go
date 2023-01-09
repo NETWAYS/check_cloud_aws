@@ -4,6 +4,9 @@ import (
 	"github.com/NETWAYS/go-check"
 	"github.com/spf13/cobra"
 	"os"
+	"os/user"
+	"path/filepath"
+	"runtime"
 )
 
 var (
@@ -51,11 +54,40 @@ func init() {
 	})
 
 	p := rootCmd.PersistentFlags()
-	p.StringVarP(&CredentialsFile, "credentials-file", "C", "~/.aws/credentials", "Path to the credentials file")
+	// Default is empty and set later with the user's Home dir
+	// If we set the default before the help text will show the full user's home dir which we decided against
+	p.StringVarP(&CredentialsFile, "credentials-file", "C", "", "Path to the credentials file (default \"$HOME/.aws/credentials\")")
+
+	if CredentialsFile == "" {
+		CredentialsFile = filepath.Join(userHomeDir(), ".aws", "credentials")
+	}
+
 	p.StringVarP(&Region, "region", "R", "eu-central-1", "The AWS region to send requests to")
 	p.StringVarP(&Profile, "profile", "P", "default", "The AWS profile name, which represents a separate credential profile in the credential file")
 	p.IntVarP(&Timeout, "timeout", "t", Timeout, "Timeout for the check")
 
 	rootCmd.Flags().SortFlags = false
 	p.SortFlags = false
+}
+
+// Wrapper for os.UserHomeDir when getting config files for example
+func userHomeDir() string {
+	var home string
+
+	if runtime.GOOS == "windows" { // Windows
+		home = os.Getenv("USERPROFILE")
+	} else { // Linux/macOS
+		home = os.Getenv("HOME")
+	}
+
+	if len(home) > 0 {
+		return home
+	}
+
+	currUser, _ := user.Current()
+	if currUser != nil {
+		home = currUser.HomeDir
+	}
+
+	return home
 }
