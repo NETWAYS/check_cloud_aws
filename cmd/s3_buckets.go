@@ -1,9 +1,10 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"github.com/NETWAYS/check_cloud_aws/internal"
-	b "github.com/NETWAYS/check_cloud_aws/internal/s3"
+	s3i "github.com/NETWAYS/check_cloud_aws/internal/s3"
 	"github.com/NETWAYS/go-check"
 	"github.com/NETWAYS/go-check/perfdata"
 	"github.com/NETWAYS/go-check/result"
@@ -15,6 +16,7 @@ import (
 var (
 	CriticalBucketSize string
 	WarningBucketSize  string
+	BucketNames        []string
 )
 
 var s3BucketCmd = &cobra.Command{
@@ -22,15 +24,15 @@ var s3BucketCmd = &cobra.Command{
 	Short: "Checks the size of a single bucket or multiple buckets",
 	Example: `
 	check_cloud_aws s3 bucket
-	OK - 1 Buckets: 0 Critical - 0 Warning - 1 Ok
+	OK - 1 Buckets: 0 Critical - 0 Warning - 1 OK
 	 \_[OK] my-bucket - value: 100MiB | my-bucket=100MB;10240;20480
 
 	check_cloud_aws s3 bucket --crit-bucket-size 10
-	CRITICAL - 1 Buckets: 1 Critical - 0 Warning - 0 Ok
+	CRITICAL - 1 Buckets: 1 Critical - 0 Warning - 0 OK
 	 \_[CRITICAL] my-bucket - value: 100MiB | my-bucket=100MB;10240;10
 
 	check_cloud_aws s3 bucket --crit-bucket-size 5GB
-	CRITICAL - 1 Buckets: 1 Critical - 0 Warning - 0 Ok
+	CRITICAL - 1 Buckets: 1 Critical - 0 Warning - 0 OK
 	 \_[CRITICAL] my-bucket - value: 100MiB | my-bucket=100MB;10240;10`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
@@ -46,11 +48,12 @@ var s3BucketCmd = &cobra.Command{
 		)
 
 		buckets := s3.ListBucketsOutput{}
-		objectsOutput := b.V2Output{}
+		objectsOutput := s3i.V2Output{}
 
 		client := RequireS3Client()
 
-		if BucketNames == nil {
+		// Load all buckets of if no buckets are speficied
+		if len(BucketNames) == 0 {
 			bk, err := client.LoadAllBuckets()
 			if err != nil {
 				check.ExitError(err)
@@ -58,9 +61,19 @@ var s3BucketCmd = &cobra.Command{
 
 			buckets = *bk
 		} else {
+			// Load specific buckets
 			for _, bucketName := range BucketNames {
-				buckets.Buckets = append(buckets.Buckets, client.LoadBucketByName(bucketName))
+				b, err := client.LoadBucketByName(bucketName)
+				// Requested bucket does not exist, skip
+				if errors.Is(err, s3i.ErrBucketNotFound) {
+					continue
+				}
+				buckets.Buckets = append(buckets.Buckets, b)
 			}
+		}
+
+		if len(buckets.Buckets) == 0 {
+			check.ExitError(fmt.Errorf("No buckets available"))
 		}
 
 		critical, err := internal.ParseThreshold(CriticalBucketSize)
@@ -121,7 +134,7 @@ var s3BucketCmd = &cobra.Command{
 			perf.Add(&p)
 		}
 
-		summary += fmt.Sprintf("%d Buckets: %d Critical - %d Warning - %d Ok\n", len(buckets.Buckets), totalCrit, totalWarn, totalOk)
+		summary += fmt.Sprintf("%d Buckets: %d Critical - %d Warning - %d OK\n", len(buckets.Buckets), totalCrit, totalWarn, totalOk)
 
 		check.ExitRaw(result.WorstState(states...), summary+output, "|", perf.String())
 	},

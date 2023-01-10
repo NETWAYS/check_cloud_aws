@@ -1,12 +1,14 @@
 package s3
 
 import (
+	"errors"
 	"fmt"
-	"github.com/NETWAYS/go-check"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
+
+var ErrBucketNotFound = errors.New("No such Bucket")
 
 type S3Client struct {
 	S3Client *s3.S3
@@ -19,26 +21,26 @@ func NewS3Client(session *session.Session) *S3Client {
 func (c *S3Client) LoadAllBuckets() (buckets *s3.ListBucketsOutput, err error) {
 	buckets, err = c.S3Client.ListBuckets(&s3.ListBucketsInput{})
 	if err != nil {
-		err = fmt.Errorf("could not load all buckets: %w", err)
-		return nil, err
+		return nil, fmt.Errorf("could not load all buckets: %w", err)
 	}
 
-	return
+	return buckets, nil
 }
 
-func (c *S3Client) LoadBucketByName(name string) (bucket *s3.Bucket) {
+func (c *S3Client) LoadBucketByName(name string) (bucket *s3.Bucket, err error) {
 	buckets, err := c.LoadAllBuckets()
+
 	if err != nil {
-		check.ExitError(err)
+		return nil, err
 	}
 
 	for _, bucket = range buckets.Buckets {
 		if *bucket.Name == name {
-			return bucket
+			return bucket, nil
 		}
 	}
 
-	return
+	return nil, ErrBucketNotFound
 }
 
 func (c *S3Client) LoadAllObjectsFromBucket(bucket, prefix string) (objects *s3.ListObjectsV2Output, err error) {
