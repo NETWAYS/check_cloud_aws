@@ -47,8 +47,8 @@ var ec2InstanceCmd = &cobra.Command{
 }
 
 func init() {
-	ec2InstanceCmd.Flags().StringVarP(&InstanceId, "id", "i", "", "Look for ec2 instance by id")
-	ec2InstanceCmd.Flags().StringVarP(&InstanceName, "name", "n", "", "Look for ec2 instance by name")
+	ec2InstanceCmd.Flags().StringVarP(&InstanceId, "id", "i", "", "Search for ec2 instance by id")
+	ec2InstanceCmd.Flags().StringVarP(&InstanceName, "name", "n", "", "Search for ec2 instance by name")
 
 	ec2Cmd.AddCommand(ec2InstanceCmd)
 }

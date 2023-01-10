@@ -20,6 +20,18 @@ var (
 var s3BucketCmd = &cobra.Command{
 	Use:   "bucket",
 	Short: "Checks the size of a single bucket or multiple buckets",
+	Example: `
+	check_cloud_aws s3 bucket
+	OK - 1 Buckets: 0 Critical - 0 Warning - 1 Ok
+	 \_[OK] my-bucket - value: 100MiB | my-bucket=100MB;10240;20480
+
+	check_cloud_aws s3 bucket --crit-bucket-size 10
+	CRITICAL - 1 Buckets: 1 Critical - 0 Warning - 0 Ok
+	 \_[CRITICAL] my-bucket - value: 100MiB | my-bucket=100MB;10240;10
+
+	check_cloud_aws s3 bucket --crit-bucket-size 5GB
+	CRITICAL - 1 Buckets: 1 Critical - 0 Warning - 0 Ok
+	 \_[CRITICAL] my-bucket - value: 100MiB | my-bucket=100MB;10240;10`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
 			err       error
@@ -122,11 +134,11 @@ func init() {
 	s3BucketFlags.StringSliceVarP(&BucketNames, "buckets", "b", nil,
 		"Name of the S3 bucket. If '--buckets' is empty, all buckets will be evaluated.")
 	s3BucketFlags.StringVarP(&CriticalBucketSize, "crit-bucket-size", "c", "20Gb",
-		"Critical threshold for the size of the specified bucket. Alerts if size is greater than critical threshold.\n"+
-			"Possible  values are MB, GB or TB. Without any identifier specified MB is used.")
+		"Critical threshold for the size of the specified bucket. Alerts if the size is greater than the critical threshold.\n"+
+			"Possible units are MB, GB or TB (defaults to MB if none is specified).")
 	s3BucketFlags.StringVarP(&WarningBucketSize, "warn-bucket-size", "w", "10Gb",
-		"Warning threshold for the size of the specified bucket. Alerts if size is greater than warning threshold.\n"+
-			"Possible  values are MB, GB or TB. Without any identifier specified MB is used.")
+		"Warning threshold for the size of the specified bucket. Alerts if the size is greater than the warning threshold.\n"+
+			"Possible units are MB, GB or TB (defaults to MB if none is specified).")
 
 	s3BucketFlags.SortFlags = false
 }
