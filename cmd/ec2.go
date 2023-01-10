@@ -14,11 +14,11 @@ var ec2Cmd = &cobra.Command{
 	Run:   Help,
 }
 
-func RequireEC2Client() *ec2.Client {
+func RequireEC2Client() *ec2.EC2Client {
 	session, err := common.CreateSession(CredentialsFile, Profile, Region)
 	if err != nil {
 		check.ExitError(fmt.Errorf("could not setup AWS API session: %w", err))
 	}
 
-	return ec2.NewClient(session)
+	return ec2.NewEC2Client(session)
 }
