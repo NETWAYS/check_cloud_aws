@@ -17,6 +17,7 @@ var (
 	CriticalBucketSize string
 	WarningBucketSize  string
 	BucketNames        []string
+	EmptyOK            bool
 )
 
 var s3BucketCmd = &cobra.Command{
@@ -70,6 +71,10 @@ var s3BucketCmd = &cobra.Command{
 				}
 				buckets.Buckets = append(buckets.Buckets, b)
 			}
+		}
+
+		if len(buckets.Buckets) == 0 && EmptyOK {
+			check.ExitRaw(check.OK, "No buckets available")
 		}
 
 		if len(buckets.Buckets) == 0 {
@@ -152,6 +157,8 @@ func init() {
 	s3BucketFlags.StringVarP(&WarningBucketSize, "warn-bucket-size", "w", "10Gb",
 		"Warning threshold for the size of the specified bucket. Alerts if the size is greater than the warning threshold.\n"+
 			"Possible units are MB, GB or TB (defaults to MB if none is specified).")
+	s3BucketFlags.BoolVar(&EmptyOK, "empty-ok", false,
+		"Return OK if there are no buckets")
 
 	s3BucketFlags.SortFlags = false
 }

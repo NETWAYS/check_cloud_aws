@@ -19,6 +19,7 @@ var (
 	ShowPerfdata       bool
 	ObjectPrefix       string
 	ObjectBucketNames  []string
+	ObjectEmptyOK      bool
 )
 
 var s3ObjectCmd = &cobra.Command{
@@ -81,6 +82,10 @@ var s3ObjectCmd = &cobra.Command{
 				}
 				buckets.Buckets = append(buckets.Buckets, b)
 			}
+		}
+
+		if len(buckets.Buckets) == 0 && ObjectEmptyOK {
+			check.ExitRaw(check.OK, "No buckets available")
 		}
 
 		if len(buckets.Buckets) == 0 {
@@ -172,6 +177,8 @@ func init() {
 			"Possible units are MB, GB or TB (defaults to MB if none is specified).")
 	s3ObjectFlags.BoolVarP(&ShowPerfdata, "perfdata", "p", false,
 		"Displays perfdata and lists all objects in the specified bucket.")
+	s3ObjectFlags.BoolVar(&ObjectEmptyOK, "empty-ok", false,
+		"Return OK if there are no buckets")
 
 	s3ObjectFlags.SortFlags = false
 }
