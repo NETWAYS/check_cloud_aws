@@ -6,7 +6,7 @@ An Icinga check plugin to check Amazon AWS resources.
 
 ### Health Status
 
-A general status based on the RSS feed on the AWS Health Page
+A general status based on the RSS feed on the AWS Health Page.
 
 ```
 Usage:
@@ -27,13 +27,16 @@ WARNING - Information available for cloudwatch in us-west-1
 
 check_cloud_aws --region eu-west-1 status
 CRITICAL - Service disruption for ec2 in eu-west-1
+
+check_cloud_aws --region "" status iam
+CRITICAL - WARNING - Information available for iam (Global)
 ```
 
-### EC2 - Instances
+### EC2
 
-When one of the states is non-ok, or a machine is stopped, the check will alert.
+When one of the states is non-OK, or a machine is stopped, the check will alert.
 
-#### ec2 instances
+#### EC2 Instances
 
 Check multiple EC2 instances from a region and filtered by name or auto-scaling group.
 
@@ -45,12 +48,6 @@ Flags:
   -a, --autoscale string   Search for ec2 instances by autoscaling group
   -h, --help               help for instances
   -n, --name string        Search for ec2 instances by name (e.g. instance*)
-
-Global Flags:
-  -C, --credentials-file string   Path to the credentials file (default "~/.aws/credentials")
-  -P, --profile string            The AWS profile name, which represents a separate credential profile in the credential file (default "default")
-  -R, --region string             The AWS region to send requests to (default "eu-central-1")
-  -t, --timeout int               Timeout for the check (default 30)
 ```
 
 ```
@@ -62,9 +59,9 @@ CRITICAL - 4 Instances: 2 running - 2 stopped
  \_[OK] i-0a1b3143ae11565fc "IcingaSatellit" running instance=ok system=ok
 ```
 
-#### ec2 instance
+#### EC2 Instance
 
-Check the states of a single EC2 instance
+Check the states of a single EC2 instance.
 
 ```
 Usage:
@@ -72,14 +69,8 @@ Usage:
 
 Flags:
   -h, --help          help for instance
-  -i, --id string     Look for ec2 instance by id
-  -n, --name string   Look for ec2 instance by name
-
-Global Flags:
-  -C, --credentials-file string   Path to the credentials file (default "~/.aws/credentials")
-  -P, --profile string            The AWS profile name, which represents a separate credential profile in the credential file (default "default")
-  -R, --region string             The AWS region to send requests to (default "eu-central-1")
-  -t, --timeout int               Timeout for the check (default 30)
+  -i, --id string     Search for ec2 instance by id
+  -n, --name string   Search for ec2 instance by name
 ```
 
 ```
@@ -92,78 +83,86 @@ OK - "IcingaMaster" running instance=ok system=ok
 
 ### S3
 
-In the bucket context, calculates the size of the bucket and alerts if its size reaches the threshold.
-In the object context, the size of each object inside a bucket will be checked against the threshold.
+In the **bucket** context, calculates the size of the bucket and alerts if its size reaches the threshold.
+In the **object** context, the size of each object inside a bucket will be checked against the threshold.
 
-#### s3 bucket
+#### S3 Bucket
 
-````
+```
 Usage:
   check_cloud_aws s3 bucket [flags]
 
 Flags:
   -b, --buckets strings           Name of the S3 bucket. If '--buckets' is empty, all buckets will be evaluated.
-  -c, --crit-bucket-size string   Critical threshold for the size of the specified bucket. Alerts if size is greater than critical threshold.
-                                  Possible  values are MB, GB or TB. Without any identifier specified MB is used. (default "20Gb")
-  -w, --warn-bucket-size string   Warning threshold for the size of the specified bucket. Alerts if size is greater than warning threshold.
-                                  Possible  values are MB, GB or TB. Without any identifier specified MB is used. (default "10Gb")
+  -c, --crit-bucket-size string   Critical threshold for the size of the specified bucket. Alerts if the size is greater than the critical threshold.
+                                  Possible units are MB, GB or TB (defaults to MB if none is specified). (default "20Gb")
+  -w, --warn-bucket-size string   Warning threshold for the size of the specified bucket. Alerts if the size is greater than the warning threshold.
+                                  Possible units are MB, GB or TB (defaults to MB if none is specified). (default "10Gb")
+      --empty-ok                  Return OK if there are no buckets
   -h, --help                      help for bucket
-
-Global Flags:
-  -C, --credentials-file string   Path to the credentials file (default "~/.aws/credentials")
-  -P, --profile string            The AWS profile name, which represents a separate credential profile in the credential file (default "default")
-  -R, --region string             The AWS region to send requests to (default "eu-central-1")
-  -t, --timeout int               Timeout for the check (default 30)
-````
-
-```
-$ check_cloud_aws s3 bucket -C ~/.aws/credentials -w 100mb -c 200mb
-OK - 2 Buckets: 0 Critical - 0 Warning - 2 OK
- \_[OK] my-aws-test-bucket1 - value: 50MiB
- \_[OK] my-aws-test-bucket2 - value: 20MiB | my-aws-test-bucket1=50MB;100;200 my-aws-test-bucket2=60MB;100;200
 ```
 
-### s3 object
+```
+check_cloud_aws s3 bucket
+OK - 1 Buckets: 0 Critical - 0 Warning - 1 OK
+ \_[OK] my-bucket - value: 100MiB | my-bucket=100MB;10240;20480
 
-````
+check_cloud_aws s3 bucket --crit-bucket-size 10
+CRITICAL - 1 Buckets: 1 Critical - 0 Warning - 0 OK
+ \_[CRITICAL] my-bucket - value: 100MiB | my-bucket=100MB;10240;10
+
+check_cloud_aws s3 bucket --crit-bucket-size 5GB
+CRITICAL - 1 Buckets: 1 Critical - 0 Warning - 0 OK
+ \_[CRITICAL] my-bucket - value: 100MiB | my-bucket=100MB;10240;10
+```
+
+### S3 Object
+
+```
 Usage:
   check_cloud_aws s3 object [flags]
 
 Flags:
   -b, --buckets strings           Name of one or multiple S3 buckets. If '--buckets' is empty, all buckets will be evaluated.
       --prefix string             Limits the response to keys that begin with the specified prefix, e.G. '--prefix test' filters all objects which starts with 'test'.
-                                  NOTE: Keep in mind, that objects beneath a directory will be ignored!
-  -c, --crit-object-size string   Critical threshold for the size of the object. Alerts if size is greater than critical threshold.
-                                  Possible  values are MB, GB or TB. Without any identifier specified MB is used. (default "1gb")
-  -w, --warn-object-size string   Critical threshold for the size of the object. Alerts if size is greater than warning threshold.
-                                  Possible  values are MB, GB or TB. Without any identifier specified MB is used. (default "800mb")
-  -p, --perfdata                  Displays perfdata and lists ALL objects in the specified bucket.
+                                  NOTE: Keep in mind, that objects beneath a directory will be ignored.
+  -c, --crit-object-size string   Critical threshold for the size of the object. Alerts if the size is greater than the critical threshold.
+                                  Possible units are MB, GB or TB (defaults to MB if none is specified). (default "1gb")
+  -w, --warn-object-size string   Critical threshold for the size of the object. Alerts if the size is greater than the warning threshold.
+                                  Possible units are MB, GB or TB (defaults to MB if none is specified). (default "800mb")
+  -p, --perfdata                  Displays perfdata and lists all objects in the specified bucket.
+      --empty-ok                  Return OK if there are no buckets
   -h, --help                      help for object
+```
 
-Global Flags:
-  -C, --credentials-file string   Path to the credentials file (default "~/.aws/credentials")
-  -P, --profile string            The AWS profile name, which represents a separate credential profile in the credential file (default "default")
-  -R, --region string             The AWS region to send requests to (default "eu-central-1")
-  -t, --timeout int               Timeout for the check (default 30)
-````
+```
+check_cloud_aws s3 object
+OK - 2 Objects: 0 Critical - 0 Warning - 2 OK
+ \_[my-bucket]:
+     \_[OK] foo.fs: 100MiB
+     \_[OK] bar.fs: 100MiB
 
-````
-$ check_cloud_aws s3 object -C ~/.aws/credentials --perfdata --prefix 'test'
-OK - 2 Objects: 0 Critical - 0 Warning - 3 OK
- \_[y-aws-testbucket1]:
-   \_[OK] test-file4.txt: 20MiB
- \_[y-aws-testbucket2]:
-   \_[OK] test-file3.gif: 10MiB
-   \_[OK] test-file5.rtf: 20MiB
- | test-file4.txt=20MB;800;1024 test-file3.gif=10MB;800;1024 test-file5.gif=20MB;800;1024
-````
+check_cloud_aws s3 object --prefix file
+OK - 3 Objects: 0 Critical - 0 Warning - 3 OK
+ \_[my-bucket]:
+     \_[OK] file_1.fs: 10MiB
+     \_[OK] file_2.fs: 20MiB
+     \_[OK] file_3.fs: 30MiB
+
+check_cloud_aws s3 object --crit-object-size 10KB --buckets foo --buckets bar
+CRITICAL - 2 Objects: 2 Critical - 0 Warning - 0 OK
+ \_[foo]:
+     \_[CRITICAL] file.fs: 100MiB
+ \_[bar]:
+     \_[CRITICAL] file.fs: 100MiB
+```
 
 ### Cloudfront
 
 Checks a specific or multiple cloudfront distributions from a region. When the state is `disabled` or `InProgress`,
 the check will alert.
 
-````
+```
 Usage:
   check_cloud_aws cloudfront [flags]
 
@@ -172,18 +171,18 @@ Flags:
   -h, --help           help for cloudfront
 
 Global Flags:
-  -C, --credentials-file string   Path to the credentials file (default "~/.aws/credentials")
+  -C, --credentials-file string   Path to the credentials file (default "$HOME/.aws/credentials")
   -P, --profile string            The AWS profile name, which represents a separate credential profile in the credential file (default "default")
   -R, --region string             The AWS region to send requests to (default "eu-central-1")
   -t, --timeout int               Timeout for the check (default 30)
-````
+```
 
-````
-$ check_cloud_aws  cloudfront -C ~/.aws/credentials
+```
+check_cloud_aws cloudfront
 WARNING - 1 Distributions: 0 Disabled - 1 InProgress - 0 Enabled
  \_[WARNING] E2BD5GDFJZXKWC status=InProgress enabled=true
  | E2BD5GDFJZXKWC=inprogress
-````
+```
 
 ## Authentication
 
