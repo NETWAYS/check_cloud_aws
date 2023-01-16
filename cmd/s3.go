@@ -9,8 +9,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var BucketNames []string
-
 var s3Cmd = &cobra.Command{
 	Use:   "s3",
 	Short: "Checks in the S3 context",

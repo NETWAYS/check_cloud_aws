@@ -1,9 +1,10 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"github.com/NETWAYS/check_cloud_aws/internal"
-	b "github.com/NETWAYS/check_cloud_aws/internal/s3"
+	s3i "github.com/NETWAYS/check_cloud_aws/internal/s3"
 	"github.com/NETWAYS/go-check"
 	"github.com/NETWAYS/go-check/perfdata"
 	"github.com/NETWAYS/go-check/result"
@@ -17,6 +18,8 @@ var (
 	WarningObjectSize  string
 	ShowPerfdata       bool
 	ObjectPrefix       string
+	ObjectBucketNames  []string
+	ObjectEmptyOK      bool
 )
 
 var s3ObjectCmd = &cobra.Command{
@@ -24,21 +27,23 @@ var s3ObjectCmd = &cobra.Command{
 	Short: "Checks the size of objects, stored in a single bucket or multiple buckets",
 	Example: `
 	check_cloud_aws s3 object
-	OK - 2 Objects: 0 Critical - 0 Warning - 2 Ok
+	OK - 2 Objects: 0 Critical - 0 Warning - 2 OK
 	 \_[my-bucket]:
 		 \_[OK] foo.fs: 100MiB
 		 \_[OK] bar.fs: 100MiB
 
 	check_cloud_aws s3 object --prefix file
-	OK - 3 Objects: 0 Critical - 0 Warning - 3 Ok
+	OK - 3 Objects: 0 Critical - 0 Warning - 3 OK
 	 \_[my-bucket]:
 		 \_[OK] file_1.fs: 10MiB
 		 \_[OK] file_2.fs: 20MiB
 		 \_[OK] file_3.fs: 30MiB
 
-	check_cloud_aws s3 object --crit-object-size 10KB
-	CRITICAL - 1 Objects: 1 Critical - 0 Warning - 0 Ok
-	 \_[my-bucket]:
+	check_cloud_aws s3 object --crit-object-size 10KB --buckets foo --buckets bar
+	CRITICAL - 2 Objects: 2 Critical - 0 Warning - 0 OK
+	 \_[foo]:
+		 \_[CRITICAL] file.fs: 100MiB
+	 \_[bar]:
 		 \_[CRITICAL] file.fs: 100MiB`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
@@ -55,11 +60,12 @@ var s3ObjectCmd = &cobra.Command{
 		)
 
 		buckets := s3.ListBucketsOutput{}
-		objectsOutput := b.V2Output{}
+		objectsOutput := s3i.V2Output{}
 
 		client := RequireS3Client()
 
-		if BucketNames == nil {
+		// Load all buckets of if no buckets are speficied
+		if len(ObjectBucketNames) == 0 {
 			bk, err := client.LoadAllBuckets()
 			if err != nil {
 				check.ExitError(err)
@@ -67,9 +73,23 @@ var s3ObjectCmd = &cobra.Command{
 
 			buckets = *bk
 		} else {
-			for _, bucketName := range BucketNames {
-				buckets.Buckets = append(buckets.Buckets, client.LoadBucketByName(bucketName))
+			// Load specific buckets
+			for _, bucketName := range ObjectBucketNames {
+				b, err := client.LoadBucketByName(bucketName)
+				// Requested bucket does not exist, skip
+				if errors.Is(err, s3i.ErrBucketNotFound) {
+					continue
+				}
+				buckets.Buckets = append(buckets.Buckets, b)
 			}
+		}
+
+		if len(buckets.Buckets) == 0 && ObjectEmptyOK {
+			check.ExitRaw(check.OK, "No buckets available")
+		}
+
+		if len(buckets.Buckets) == 0 {
+			check.ExitError(fmt.Errorf("No buckets available"))
 		}
 
 		critical, err := internal.ParseThreshold(CriticalObjectSize)
@@ -130,13 +150,13 @@ var s3ObjectCmd = &cobra.Command{
 			}
 		}
 
-		summary += fmt.Sprintf("%d Objects: %d Critical - %d Warning - %d Ok\n", totalObjects, totalCrit, totalWarn, totalOk)
+		summary += fmt.Sprintf("%d Objects: %d Critical - %d Warning - %d OK\n", totalObjects, totalCrit, totalWarn, totalOk)
 
 		if ShowPerfdata {
 			check.ExitRaw(result.WorstState(states...), summary+output, "|", perf.String())
-		} else {
-			check.ExitRaw(result.WorstState(states...), summary+output)
 		}
+
+		check.ExitRaw(result.WorstState(states...), summary+output)
 	},
 }
 
@@ -144,7 +164,7 @@ func init() {
 	s3Cmd.AddCommand(s3ObjectCmd)
 
 	s3ObjectFlags := s3ObjectCmd.Flags()
-	s3ObjectFlags.StringSliceVarP(&BucketNames, "buckets", "b", nil,
+	s3ObjectFlags.StringSliceVarP(&ObjectBucketNames, "buckets", "b", nil,
 		"Name of one or multiple S3 buckets. If '--buckets' is empty, all buckets will be evaluated.")
 	s3ObjectFlags.StringVar(&ObjectPrefix, "prefix", "",
 		"Limits the response to keys that begin with the specified prefix, e.G. '--prefix test' filters all objects which starts with 'test'.\n"+
@@ -157,6 +177,8 @@ func init() {
 			"Possible units are MB, GB or TB (defaults to MB if none is specified).")
 	s3ObjectFlags.BoolVarP(&ShowPerfdata, "perfdata", "p", false,
 		"Displays perfdata and lists all objects in the specified bucket.")
+	s3ObjectFlags.BoolVar(&ObjectEmptyOK, "empty-ok", false,
+		"Return OK if there are no buckets")
 
 	s3ObjectFlags.SortFlags = false
 }

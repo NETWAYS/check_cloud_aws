@@ -118,7 +118,7 @@ Global Flags:
 
 ```
 $ check_cloud_aws s3 bucket -C ~/.aws/credentials -w 100mb -c 200mb
-OK - 2 Buckets: 0 Critical - 0 Warning - 2 Ok
+OK - 2 Buckets: 0 Critical - 0 Warning - 2 OK
  \_[OK] my-aws-test-bucket1 - value: 50MiB
  \_[OK] my-aws-test-bucket2 - value: 20MiB | my-aws-test-bucket1=50MB;100;200 my-aws-test-bucket2=60MB;100;200
 ```
@@ -149,7 +149,7 @@ Global Flags:
 
 ````
 $ check_cloud_aws s3 object -C ~/.aws/credentials --perfdata --prefix 'test'
-OK - 2 Objects: 0 Critical - 0 Warning - 3 Ok
+OK - 2 Objects: 0 Critical - 0 Warning - 3 OK
  \_[y-aws-testbucket1]:
    \_[OK] test-file4.txt: 20MiB
  \_[y-aws-testbucket2]:

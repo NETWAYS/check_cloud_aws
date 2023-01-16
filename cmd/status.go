@@ -3,13 +3,25 @@ package cmd
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/NETWAYS/check_cloud_aws/internal/status"
 	"github.com/NETWAYS/go-check"
 	"github.com/spf13/cobra"
 	"net/http"
 	"net/url"
 	"strings"
 )
+
+type rss struct {
+	Channel struct {
+		Title string `xml:"title"`
+		Link  string `xml:"link"`
+		Desc  string `xml:"description"`
+		Items []item `xml:"item"`
+	} `xml:"channel"`
+}
+
+type item struct {
+	Title string `xml:"title"`
+}
 
 // To store the CLI parameters
 type StatusConfig struct {
@@ -47,7 +59,7 @@ var statusCmd = &cobra.Command{
 	CRITICAL - WARNING - Information available for iam (Global)`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			feed    status.Rss
+			feed    rss
 			rc      int
 			output  string
 			feedUrl string

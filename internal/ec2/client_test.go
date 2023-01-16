@@ -7,8 +7,8 @@ import (
 	"testing"
 )
 
-func createTestClient() (*ec2.Client, func()) {
-	return ec2.NewClient(common.CreateTestSession(TestRegion)), enableMocking()
+func createTestClient() (*ec2.EC2Client, func()) {
+	return ec2.NewEC2Client(common.CreateTestSession(TestRegion)), enableMocking()
 }
 
 func TestClient_LoadInstance(t *testing.T) {
