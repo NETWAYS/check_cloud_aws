@@ -3,7 +3,7 @@ module github.com/NETWAYS/check_cloud_aws
 go 1.19
 
 require (
-	github.com/NETWAYS/go-check v0.4.0
+	github.com/NETWAYS/go-check v0.4.1
 	github.com/aws/aws-sdk-go v1.44.209
 	github.com/jarcoal/httpmock v1.3.0
 	github.com/spf13/cobra v1.6.1
