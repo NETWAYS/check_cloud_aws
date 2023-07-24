@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/NETWAYS/go-check v0.4.2
-	github.com/aws/aws-sdk-go v1.44.289
+	github.com/aws/aws-sdk-go v1.44.306
 	github.com/jarcoal/httpmock v1.3.0
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
