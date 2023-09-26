@@ -1,7 +1,8 @@
 package ec2_test
 
 import (
-	"github.com/NETWAYS/go-check/http/mock"
+	"github.com/NETWAYS/go-check-network/http/mock"
+
 	"github.com/jarcoal/httpmock"
 )
 

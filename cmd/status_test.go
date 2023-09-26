@@ -14,7 +14,7 @@ func TestStatus_ConnectionRefused(t *testing.T) {
 	out, _ := cmd.CombinedOutput()
 
 	actual := string(out)
-	expected := "UNKNOWN - Get \"https://localhost"
+	expected := "[UNKNOWN] - Get \"https://localhost"
 
 	if !strings.Contains(actual, expected) {
 		t.Error("\nActual: ", actual, "\nExpected: ", expected)
@@ -31,7 +31,7 @@ type StatusTest struct {
 func TestStatusCmd(t *testing.T) {
 	tests := []StatusTest{
 		{
-			name: "status-ok",
+			name: "status-unknown",
 			server: httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusOK)
 				w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>
@@ -51,7 +51,7 @@ func TestStatusCmd(t *testing.T) {
 </rss>`))
 			})),
 			args:     []string{"run", "../main.go", "status", "--region", "eu-foobar-1"},
-			expected: "UNKNOWN - Could not determine status. Nothing so split into Slice",
+			expected: "[UNKNOWN] - Could not determine status. Nothing so split into Slice",
 		},
 		{
 			name: "status-ok",
@@ -83,7 +83,7 @@ func TestStatusCmd(t *testing.T) {
 </rss>`))
 			})),
 			args:     []string{"run", "../main.go", "status", "--region", "eu-foobar-1"},
-			expected: "OK - Event resolved for ec2 (eu-foobar-1)",
+			expected: "[OK] - Event resolved for ec2 (eu-foobar-1)",
 		},
 		{
 			name: "status-ok-no-items",
@@ -103,7 +103,7 @@ func TestStatusCmd(t *testing.T) {
 </rss>`))
 			})),
 			args:     []string{"run", "../main.go", "status", "--region", "eu-foobar-1"},
-			expected: "OK - No events for ec2 (eu-foobar-1)",
+			expected: "[OK] - No events for ec2 (eu-foobar-1)",
 		},
 		{
 			name: "status-ok-normal",
@@ -129,7 +129,7 @@ func TestStatusCmd(t *testing.T) {
 </rss>`))
 			})),
 			args:     []string{"run", "../main.go", "status", "--region", "eu-foobar-1"},
-			expected: "OK - Service ec2 is operating normally (eu-foobar-1)",
+			expected: "[OK] - Service ec2 is operating normally (eu-foobar-1)",
 		},
 		{
 			name: "status-warning",
@@ -155,7 +155,7 @@ func TestStatusCmd(t *testing.T) {
 </rss>`))
 			})),
 			args:     []string{"run", "../main.go", "status", "--region", "eu-foobar-1"},
-			expected: "WARNING - Performance issues for ec2 (eu-foobar-1)",
+			expected: "[WARNING] - Performance issues for ec2 (eu-foobar-1)",
 		},
 		{
 			name: "status-critical",
@@ -181,7 +181,7 @@ func TestStatusCmd(t *testing.T) {
 </rss>`))
 			})),
 			args:     []string{"run", "../main.go", "status", "--region", "eu-foobar-1"},
-			expected: "CRITICAL - Service disruption for ec2 (eu-foobar-1)",
+			expected: "[CRITICAL] - Service disruption for ec2 (eu-foobar-1)",
 		},
 		{
 			name: "status-informational",
@@ -207,7 +207,7 @@ func TestStatusCmd(t *testing.T) {
 </rss>`))
 			})),
 			args:     []string{"run", "../main.go", "status", "--region", "eu-foobar-1"},
-			expected: "WARNING - Information available for ec2 (eu-foobar-1)",
+			expected: "[WARNING] - Information available for ec2 (eu-foobar-1)",
 		},
 		{
 			name: "status-global-service",
@@ -233,7 +233,7 @@ func TestStatusCmd(t *testing.T) {
 </rss>`))
 			})),
 			args:     []string{"run", "../main.go", "status", "-s", "iam", "--region", ""},
-			expected: "WARNING - Information available for iam (Global)",
+			expected: "[WARNING] - Information available for iam (Global)",
 		},
 	}
 
