@@ -54,7 +54,7 @@ var ec2InstancesCmd = &cobra.Command{
 			}
 		}
 
-		check.Exit(instances.GetStatus(), summary+"\n"+instances.GetOutput())
+		check.ExitRaw(instances.GetStatus(), summary+"\n"+instances.GetOutput())
 	},
 }
 
