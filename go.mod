@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/NETWAYS/go-check v0.6.2
 	github.com/NETWAYS/go-check-network/http v0.0.0-20230928080609-57070f836e41
-	github.com/aws/aws-sdk-go v1.54.6
+	github.com/aws/aws-sdk-go v1.54.11
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.9.0
