@@ -1,6 +1,7 @@
 run:
   timeout: 5m
-  skip-files:
+
+issues.exclude-files:
     - '(.+)_test\.go'
 
 linters:
@@ -14,7 +15,6 @@ linters:
     - wsl
     - exportloopref
   disable:
-    - scopelint
   presets:
     - bugs
     - unused
