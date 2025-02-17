@@ -1,20 +1,12 @@
 run:
   timeout: 5m
 
-issues.exclude-files:
+issues:
+  exclude-files:
     - '(.+)_test\.go'
 
 linters:
   disable-all: false
-  enable:
-    - funlen
-    - dogsled
-    - dupl
-    # - lll
-    - whitespace
-    - wsl
-    - exportloopref
-  disable:
   presets:
     - bugs
     - unused
