@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-var ErrBucketNotFound = errors.New("No such Bucket")
+var ErrBucketNotFound = errors.New("no such Bucket")
 
 type S3Client struct {
 	S3Client *s3.S3

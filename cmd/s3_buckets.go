@@ -78,7 +78,7 @@ var s3BucketCmd = &cobra.Command{
 		}
 
 		if len(buckets.Buckets) == 0 {
-			check.ExitError(fmt.Errorf("No buckets available"))
+			check.ExitError(fmt.Errorf("no buckets available"))
 		}
 
 		critical, err := internal.ParseThreshold(CriticalBucketSize)
@@ -124,7 +124,7 @@ var s3BucketCmd = &cobra.Command{
 
 			output += objectsOutput.GetBucketOutput(bucketSize, rc)
 
-			if len(buckets.Buckets) > 1 && !(len(buckets.Buckets) == idx+1) {
+			if len(buckets.Buckets) > 1 && (len(buckets.Buckets) != idx+1) {
 				output += "\n"
 			}
 

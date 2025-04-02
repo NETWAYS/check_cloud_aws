@@ -50,7 +50,7 @@ var ec2InstancesCmd = &cobra.Command{
 			summary += fmt.Sprintf(" %d %s ", count, state)
 			ctr += count
 			if ctr != len(instances.Instances) {
-				summary += fmt.Sprintf("-")
+				summary += "-"
 			}
 		}
 

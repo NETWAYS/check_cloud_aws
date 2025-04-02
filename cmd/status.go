@@ -96,7 +96,7 @@ var statusCmd = &cobra.Command{
 		c := &http.Client{}
 
 		if Region == "" && !contains(cliStatusConfig.Service, globalServices) {
-			check.ExitError(fmt.Errorf("Region required for regional services"))
+			check.ExitError(fmt.Errorf("region required for regional services"))
 		}
 
 		// Using + concatenation since the JoinPath will add / inbetween
@@ -115,7 +115,7 @@ var statusCmd = &cobra.Command{
 		}
 
 		if resp.StatusCode != http.StatusOK {
-			check.ExitError(fmt.Errorf("Could not get %s - Error: %d", feedUrl, resp.StatusCode))
+			check.ExitError(fmt.Errorf("could not get %s - Error: %d", feedUrl, resp.StatusCode))
 		}
 
 		defer resp.Body.Close()
