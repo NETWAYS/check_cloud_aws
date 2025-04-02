@@ -63,7 +63,7 @@ var cloudfrontCmd = &cobra.Command{
 		for _, distribution := range distributions {
 			var val string
 
-			if *distribution.Distribution.DistributionConfig.Enabled == false {
+			if !*distribution.Distribution.DistributionConfig.Enabled {
 				val = "disabled"
 				rc = 2
 				totalCrit++

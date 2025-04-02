@@ -89,7 +89,7 @@ var s3ObjectCmd = &cobra.Command{
 		}
 
 		if len(buckets.Buckets) == 0 {
-			check.ExitError(fmt.Errorf("No buckets available"))
+			check.ExitError(fmt.Errorf("no buckets available"))
 		}
 
 		critical, err := internal.ParseThreshold(CriticalObjectSize)
