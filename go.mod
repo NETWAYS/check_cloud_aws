@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go v1.55.7
 	github.com/jarcoal/httpmock v1.4.1
 	github.com/spf13/cobra v1.9.1
-	github.com/stretchr/testify v1.11.0
+	github.com/stretchr/testify v1.11.1
 	gopkg.in/ini.v1 v1.67.0
 )
 
